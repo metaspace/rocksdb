@@ -246,6 +246,7 @@ ROCKSDB_PLUGIN_HEADERS = $(foreach plugin, $(ROCKSDB_PLUGINS), $(foreach header,
 ROCKSDB_PLUGIN_PKGCONFIG_REQUIRES = $(foreach plugin, $(ROCKSDB_PLUGINS), $($(plugin)_PKGCONFIG_REQUIRES))
 PLATFORM_LDFLAGS += $(foreach plugin, $(ROCKSDB_PLUGINS), $($(plugin)_LDFLAGS))
 CXXFLAGS += $(foreach plugin, $(ROCKSDB_PLUGINS), $($(plugin)_CXXFLAGS))
+TEST_MAIN_SOURCES += $(foreach plugin, $(ROCKSDB_PLUGINS), $(foreach source, $($(plugin)_TEST_MAIN_SOURCES), plugin/$(plugin)/$(source)))
 
 ifneq ($(strip $(ROCKSDB_PLUGIN_PKGCONFIG_REQUIRES)),)
 LDFLAGS := $(LDFLAGS) $(shell pkg-config --libs $(ROCKSDB_PLUGIN_PKGCONFIG_REQUIRES))
@@ -1982,6 +1983,10 @@ db_basic_bench: $(OBJ_DIR)/microbench/db_basic_bench.o $(LIBRARY)
 
 cache_reservation_manager_test: $(OBJ_DIR)/cache/cache_reservation_manager_test.o $(TEST_LIBRARY) $(LIBRARY)
 	$(AM_LINK)
+
+ROCKSDB_PLUGIN_TEST_MKS = $(foreach plugin, $(ROCKSDB_PLUGINS), plugin/$(plugin)/test-mk/*.mk)
+include $(ROCKSDB_PLUGIN_TEST_MKS)
+
 #-------------------------------------------------
 # make install related stuff
 PREFIX ?= /usr/local
