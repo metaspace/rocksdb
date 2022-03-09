@@ -243,6 +243,7 @@ ROCKSDB_PLUGIN_LDFLAGS = $(foreach plugin, $(ROCKSDB_PLUGINS), $($(plugin)_LDFLA
 ROCKSDB_PLUGIN_PKGCONFIG_REQUIRES = $(foreach plugin, $(ROCKSDB_PLUGINS), $($(plugin)_PKGCONFIG_REQUIRES))
 
 CXXFLAGS += $(foreach plugin, $(ROCKSDB_PLUGINS), $($(plugin)_CXXFLAGS))
+TEST_MAIN_SOURCES += $(foreach plugin, $(ROCKSDB_PLUGINS), $(foreach source, $($(plugin)_TEST_MAIN_SOURCES), plugin/$(plugin)/$(source)))
 PLATFORM_LDFLAGS += $(ROCKSDB_PLUGIN_LDFLAGS)
 
 # Patch up the link flags for JNI from the plugins
@@ -1952,6 +1953,10 @@ db_basic_bench: $(OBJ_DIR)/microbench/db_basic_bench.o $(LIBRARY)
 
 cache_reservation_manager_test: $(OBJ_DIR)/cache/cache_reservation_manager_test.o $(TEST_LIBRARY) $(LIBRARY)
 	$(AM_LINK)
+
+ROCKSDB_PLUGIN_TEST_MKS = $(foreach plugin, $(ROCKSDB_PLUGINS), plugin/$(plugin)/test-mk/*.mk)
+-include $(ROCKSDB_PLUGIN_TEST_MKS)
+
 #-------------------------------------------------
 # make install related stuff
 PREFIX ?= /usr/local
